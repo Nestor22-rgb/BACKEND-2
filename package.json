@@ -1,0 +1,29 @@
+{
+  "name": "backend-2",
+  "version": "2.0.0",
+  "description": "Backend para el curso de backend-2",
+  "main": "app.js",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "mongoose": "9.1.5",
+    "connect-mongo": "6.0.0",
+    "cookie-parser": "1.4.7",
+    "express-session": "1.19.0",
+    "bcrypt": "6.0.0",
+    "dotenv": "17.2.4",
+    "jsonwebtoken": "9.0.3",
+    "passport": "0.7.0",
+    "passport-local": "1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.11"
+  },
+  "author": "Nestor Ledesma",
+  "license": "MIT"
+}
