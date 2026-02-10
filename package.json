@@ -2,6 +2,14 @@
   "name": "backend-2",
   "version": "2.0.0",
   "description": "Backend para el curso de backend-2",
+  "homepage": "https://github.com/Nestor22-rgb/BACKEND-2#readme",
+  "bugs": {
+    "url": "https://github.com/Nestor22-rgb/BACKEND-2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nestor22-rgb/BACKEND-2.git"
+  },
   "main": "app.js",
   "type":"module",
   "scripts": {
