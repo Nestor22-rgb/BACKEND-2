@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { User } from "../config/models/user.model.js";
 import bcrypt from 'bcrypt';
-import { requireLogin, alreadyLogin, requireJWT } from "../middleware/auth.middleware.js";
+import { requireLogin, alreadyLogin, requiereJWT } from "../middleware/auth.middleware.js";
 import jwt from "jsonwebtoken";
 import passport from "passport";
 
@@ -55,7 +55,7 @@ router.post('/logout', requireLogin, async (req, res, next) => {
             req.session.destroy((err2) => {
                 // Limpia la cookie de session (por defecto 'connect.sid)
                 res.clearCookie('connect.sid');
-                return res.status(200).json({ message: "Logaut Ok (sin session activa" });
+                return res.status(200).json({ message: "Logaut Ok (sin session activa)" });
             })
         }
     })
@@ -63,6 +63,32 @@ router.post('/logout', requireLogin, async (req, res, next) => {
 
 router.get('/me', requireLogin, (req, res) => {
     res.status(200).json({ user: req.session.user })
+});
+
+
+//JWT
+router.post('/jwt/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    const u = await User.findOne({email});
+    
+    if(!u || !u.password) {
+        return res.status(400).json({ message: "Invalid Credentials" });
+    }
+    const ok = await bcrypt.compare(password, u.password);
+    if(!ok) return res.status(400).json({ message: "Invalid Credentias" });
+
+        const paylod = { sub: String(u.id), email: u.email, role: u.role };
+        const token = jwt.sign(paylod, process.env.JWT_SECRET, {expiresIn: "1hr"});
+        res.status(200).json({ message: "Login Ok (JWT)", user: u, token });
+
+});
+
+router.get('/jwt/me', requiereJWT, async (req, res) => {
+    const u = await User.findById(req.jwt.sub).lean();
+    if(!u) return res.status(404).json({ error: "Usuario no encontrado" });
+    const { first_name, last_name, email, password, age, role } = u;
+    res.json({ user: {first_name, last_name, email, password, age, role} })
 });
 
 

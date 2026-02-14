@@ -1,7 +1,20 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as JwtStrategy } from "passport-jwt";
 import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
+
+
+
+
+function cookierExtractor(req) {
+    if(req && req.cookies && req.cookies.access_token) {
+        return req.cookies.access_token;
+    }
+    return null;
+}
 
 
 export function initPassport() {
@@ -57,6 +70,21 @@ export function initPassport() {
     //         } catch (err) { return done(err); }
     //     }
     // ));
+
+    // JWT Strategy
+    passport.use('jwt-cookie', new JwtStrategy(
+        {
+            jwtFromRequest: cookierExtractor,
+            secretOrKey: process.env.JWT_SECRET
+        },
+        async (payload, done) => {
+            try {
+                const user = await User.findById(payload.sub).lean();
+                if (!user) return done(null, false);
+                return done(null, { _id: user._id, email: user.email, role: user.role })
+            } catch (err) { return done(err); }
+        }
+    ))
 
     passport.serializeUser((user, done) => done(null, user._id));
     passport.deserializeUser(async (id, done) => {
