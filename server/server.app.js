@@ -1,12 +1,13 @@
-import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
-import { initRouters } from './../routes/router.js';
 
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 
+import environment, { validateEnv } from '../config/env.config.js';
+
+import { initRouters } from './../routes/router.js';
 import logger from './../middleware/logger.middleware.js'
 
 import { connectAuto } from './../config/db/connect.config.js';
@@ -15,8 +16,8 @@ import { initPassport } from './../config/auth/passport.config.js';
 
 
 const app = express();
-const PORT = process.env.PORT || 8000;
-const SECRET_SESSION = process.env.SECRET_SESSION || "clave_secreta";
+const PORT = environment.PORT || 8000;
+const SECRET_SESSION = environment.SECRET_SESSION || "clave_secreta";
 
 app.use(express.json());
 app.use(logger);
@@ -25,6 +26,10 @@ app.use(cookieParser(SECRET_SESSION));
 
 export const startServer = async () => {
 
+    // Validar la existencia de las variables de entorno 
+    validateEnv();
+
+    // Conectamos a la DB
     await connectAuto();
 
     const store = MongoStore.create({
@@ -54,9 +59,6 @@ export const startServer = async () => {
     // Inicializar todos los enrutadores
     initRouters(app)
 
-    app.use((req, res) => {
-        res.status(404).json({ error: "Page not found.!" })
-    })
-
+    // Inicializar el servidor
     app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
 }

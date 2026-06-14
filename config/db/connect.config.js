@@ -32,5 +32,5 @@ export const connectMongoAtlasDB = async () => {
 }
 
 export const connectAuto = async () => {
-    return connectMongoAtlasDB();
+    return connectMongoDB();
 }
