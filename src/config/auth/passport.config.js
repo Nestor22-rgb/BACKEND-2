@@ -4,7 +4,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import bcrypt from "bcrypt";
-import { User } from "../models/user.model.js";
+import { User } from "../../models/user.model.js";
 
 
 
